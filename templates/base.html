@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="ph ph-notebook"></i>
+                <span>LogLife</span>
+            </div>
+
+            <nav class="side-nav">
+                <a href="#" class="active"><i class="ph ph-calendar-check"></i> History</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>{{ title }}</h1>
+                <div class="actions">
+                    <button class="btn-primary" onclick="openModal()"><i class="ph ph-plus"></i> New Entry</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- Modal -->
+            <div id="entryModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2>Log New Activity</h2>
+                    <form action="/add" method="POST">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            <input type="time" name="time" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tags (Comma separated)</label>
+                            <input type="text" name="tags" placeholder="e.g. Python, Study" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea name="notes" rows="3" placeholder="What did you do?"></textarea>
+                        </div>
+                        <div class="form-check">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" name="completed" checked>
+                                <span class="checkmark"></span>
+                            </label>
+                            <span>Mark as Completed</span>
+                        </div>
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; justify-content: center; margin-top: 15px;">Save Entry</button>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function openModal() {
+                    document.getElementById("entryModal").style.display = "block";
+                }
+                function closeModal() {
+                    document.getElementById("entryModal").style.display = "none";
+                }
+                window.onclick = function (event) {
+                    if (event.target == document.getElementById("entryModal")) {
+                        closeModal();
+                    }
+                }
+            </script>
+        </main>
+    </div>
+</body>
+
+</html>

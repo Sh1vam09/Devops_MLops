@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="table-container">
+    <table class="activity-table">
+        <thead>
+            <tr>
+                <th width="20%"><i class="ph ph-calendar-blank"></i> Day and Date</th>
+                <th width="10%"><i class="ph ph-check-square"></i> Completed</th>
+                <th width="25%"><i class="ph ph-list-dashes"></i> Subject</th>
+                <th width="45%"><i class="ph ph-text-align-left"></i> Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in activities %}
+            <tr>
+                <td class="date-cell">
+                    <div class="row-icon"><i class="ph ph-file-text"></i></div>
+                    <div class="date-info">
+                        <span class="date-text">{{ activity.date_str }}</span>
+                        <span class="time-text">{{ activity.time }}</span>
+                    </div>
+                </td>
+                <td class="status-cell">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" {% if activity.completed %}checked{% endif %} disabled>
+                        <span class="checkmark"></span>
+                    </label>
+                </td>
+                <td class="tags-cell">
+                    <div class="tag-group">
+                        {% for tag in activity.tags %}
+                        <span class="tag-badge {{ tag|lower|replace(' ', '-')|replace('/', '-') }}">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </td>
+                <td class="notes-cell">
+                    {{ activity.notes }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
