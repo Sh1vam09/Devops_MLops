@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="icon-box purple"><i class="ph ph-lightning"></i></div>
+        <div class="stat-info">
+            <span class="label">Total Activities</span>
+            <span class="value">{{ stats.total }}</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-box green"><i class="ph ph-check-circle"></i></div>
+        <div class="stat-info">
+            <span class="label">Completed</span>
+            <span class="value">{{ stats.completed }}</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-box blue"><i class="ph ph-chart-pie-slice"></i></div>
+        <div class="stat-info">
+            <span class="label">Completion Rate</span>
+            <span class="value">{{ stats.completion_rate }}%</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon-box orange"><i class="ph ph-tag"></i></div>
+        <div class="stat-info">
+            <span class="label">Top Focus</span>
+            <span class="value">{{ stats.top_tag }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="charts-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+    <div class="chart-card"
+        style="background: var(--bg-sidebar); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <h3>Tags Distribution</h3>
+        <canvas id="tagsChart"></canvas>
+    </div>
+    <div class="chart-card"
+        style="background: var(--bg-sidebar); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">
+        <h3>Activity Trend (Last 7 Days)</h3>
+        <canvas id="trendChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Tags Chart
+    const ctxTags = document.getElementById('tagsChart').getContext('2d');
+    new Chart(ctxTags, {
+        type: 'doughnut',
+        data: {
+            labels: {{ tag_labels| tojson }},
+        datasets: [{
+            data: {{ tag_data| tojson }},
+        backgroundColor: ['#9d34da', '#20beff', '#009688', '#ffc107', '#2496ed'],
+        borderWidth: 0
+            }]
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { color: '#ccc' } }
+        }
+    }
+    });
+
+    // Trend Chart
+    const ctxTrend = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctxTrend, {
+        type: 'bar',
+        data: {
+            labels: {{ date_labels| tojson }},
+        datasets: [{
+            label: 'Activities',
+            data: {{ date_data| tojson }},
+        backgroundColor: '#2383e2',
+        borderRadius: 4
+            }]
+        },
+        options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true, ticks: { color: '#ccc' }, grid: { color: '#444' } },
+            x: { ticks: { color: '#ccc' }, grid: { display: false } }
+        },
+        plugins: {
+            legend: { display: false }
+        }
+    }
+    });
+</script>
+{% endblock %}

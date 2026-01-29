@@ -1,16 +1,56 @@
 from datetime import datetime
+from collections import Counter
 from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
 activities = [
-    {"id": 1, "date_str": "28th Jan 2026", "time": "09:30", "completed": True, "tags": ["System Design", "Architecture"], "notes": "Drafted the high-level architecture for the real-time notification service."},
+    {"id": 1, "date_str": "28th Jan 2026", "time": "09:30", "completed": True, "tags": ["System Design", "Architecture"], "notes": "Drafted the high-level architecture for the real-time notification service.", "raw_date": "2026-01-28"},
 ]
 
 @app.route('/')
 @app.route('/history')
 def index():
     return render_template('index.html', title="Activity History", activities=reversed(activities))
+
+@app.route('/analytics')
+def analytics():
+    total_activities = len(activities)
+    if total_activities == 0:
+        return render_template('analytics.html', title="Analytics", stats={}, charts={})
+
+    completed_count = sum(1 for a in activities if a.get('completed'))
+    completion_rate = round((completed_count / total_activities) * 100, 1)
+
+    # Tag Analysis
+    all_tags = []
+    for a in activities:
+        all_tags.extend(a.get('tags', []))
+    tag_counts = Counter(all_tags).most_common(5) # Top 5 tags
+    
+    # Date Analysis (Activities per day)
+    date_counts = Counter()
+    for a in activities:
+        raw = a.get('raw_date')
+        if raw:
+            date_counts[raw] += 1
+    
+    sorted_dates = sorted(date_counts.keys())
+    chart_dates = sorted_dates[-7:] # Last 7 active days
+    chart_counts = [date_counts[d] for d in chart_dates]
+
+    stats = {
+        "total": total_activities,
+        "completed": completed_count,
+        "completion_rate": completion_rate,
+        "top_tag": tag_counts[0][0] if tag_counts else "N/A"
+    }
+
+    return render_template('analytics.html', title="Analytics Dashboard", stats=stats, 
+                           tag_labels=[t[0] for t in tag_counts], 
+                           tag_data=[t[1] for t in tag_counts],
+                           date_labels=chart_dates,
+                           date_data=chart_counts)
 
 @app.route('/add', methods=['POST'])
 def add_activity():
