@@ -26,7 +26,7 @@
             </div>
 
             <nav class="side-nav">
-                <a href="#" class="active"><i class="ph ph-calendar-check"></i> History</a>
+                <a href="{{ url_for('index') }}" class="active"><i class="ph ph-calendar-check"></i> History</a>
             </nav>
         </aside>
 
@@ -77,16 +77,73 @@
                 </div>
             </div>
 
+            <!-- Edit Modal -->
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeEditModal()">&times;</span>
+                    <h2>Edit Activity</h2>
+                    <form id="editForm" action="" method="POST">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="edit-date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            <input type="time" id="edit-time" name="time" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tags (Comma separated)</label>
+                            <input type="text" id="edit-tags" name="tags" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="edit-notes" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="form-check">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="edit-completed" name="completed">
+                                <span class="checkmark"></span>
+                            </label>
+                            <span>Mark as Completed</span>
+                        </div>
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; justify-content: center; margin-top: 15px;">Update Entry</button>
+                    </form>
+                </div>
+            </div>
+
             <script>
+                // Add Modal
                 function openModal() {
                     document.getElementById("entryModal").style.display = "block";
                 }
                 function closeModal() {
                     document.getElementById("entryModal").style.display = "none";
                 }
+
+                // Edit Modal
+                function openEditModal(activity) {
+                    document.getElementById("editModal").style.display = "block";
+                    document.getElementById("editForm").action = "/edit/" + activity.id;
+
+                    // Populate fields
+                    // Note: activity.raw_date should be "YYYY-MM-DD" for the date input to work correctly
+                    document.getElementById("edit-date").value = activity.raw_date || "";
+                    document.getElementById("edit-time").value = activity.time || "";
+                    document.getElementById("edit-tags").value = activity.tags ? activity.tags.join(", ") : "";
+                    document.getElementById("edit-notes").value = activity.notes || "";
+                    document.getElementById("edit-completed").checked = activity.completed;
+                }
+                function closeEditModal() {
+                    document.getElementById("editModal").style.display = "none";
+                }
+
                 window.onclick = function (event) {
                     if (event.target == document.getElementById("entryModal")) {
                         closeModal();
+                    }
+                    if (event.target == document.getElementById("editModal")) {
+                        closeEditModal();
                     }
                 }
             </script>

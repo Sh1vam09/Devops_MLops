@@ -6,9 +6,10 @@
         <thead>
             <tr>
                 <th width="20%"><i class="ph ph-calendar-blank"></i> Day and Date</th>
-                <th width="10%"><i class="ph ph-check-square"></i> Completed</th>
-                <th width="25%"><i class="ph ph-list-dashes"></i> Subject</th>
-                <th width="45%"><i class="ph ph-text-align-left"></i> Notes</th>
+                <th width="10%"><i class="ph ph-check-square"></i> Status</th>
+                <th width="20%"><i class="ph ph-list-dashes"></i> Subject</th>
+                <th width="40%"><i class="ph ph-text-align-left"></i> Notes</th>
+                <th width="10%">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +37,19 @@
                 </td>
                 <td class="notes-cell">
                     {{ activity.notes }}
+                </td>
+                <td class="actions-cell">
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-icon-small edit-btn" onclick='openEditModal({{ activity|tojson }})'>
+                            <i class="ph ph-pencil-simple"></i>
+                        </button>
+                        <form action="{{ url_for('delete_activity', id=activity.id) }}" method="POST"
+                            onsubmit="return confirm('Are you sure?');" style="display:inline;">
+                            <button class="btn-icon-small delete-btn">
+                                <i class="ph ph-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
